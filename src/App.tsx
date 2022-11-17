@@ -1,13 +1,76 @@
-import React from 'react';
-import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import React, { useState } from 'react';
+import { AiFillStar } from 'react-icons/ai';
 import colors from 'tailwindcss/colors';
 
+interface StarsProps {
+  rating?: number;
+  maxRating?: number;
+  onClick?: (newRating: number) => void;
+}
+
+const Stars = ({ rating, maxRating = 5, onClick }: StarsProps) => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  return (
+    <div className="flex">
+      {Array(maxRating)
+        .fill(null)
+        .map((el, i) => {
+          const areStarsHoverable = !!onClick;
+          const isStarIndexLowerThanRating = i < Number(rating);
+          const isCurrentlyHovering = hoveredIndex !== null;
+
+          const isStarHovered = isCurrentlyHovering
+            ? hoveredIndex >= i
+            : isStarIndexLowerThanRating;
+
+          const shouldHighlightStar = areStarsHoverable
+            ? isStarHovered
+            : isStarIndexLowerThanRating;
+
+          const color = shouldHighlightStar ? colors.blue['900'] : colors.blue['100'];
+
+          return (
+            <AiFillStar
+              key={i}
+              size="30"
+              color={color}
+              className={areStarsHoverable ? 'cursor-pointer' : ''}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onClick={() => onClick?.(i + 1)}
+            />
+          );
+        })}
+    </div>
+  );
+};
+
+interface FiltersProps {
+  rating?: number;
+  setRating: (newRating: number) => void;
+}
+
+const Filters = ({ rating, setRating }: FiltersProps) => {
+  const handleStartClick = (newRating: number) => {
+    setRating(newRating);
+  };
+
+  return (
+    <div className="p-4 w-6/12 -mt-12 bg-white shadow-xl rounded-lg sticky top-0">
+      <Stars onClick={handleStartClick} rating={rating} />
+    </div>
+  );
+};
+
 const App = () => {
+  const [rating, setRating] = useState<number | undefined>(undefined);
+
   return (
     <>
       <header className="w-full h-64 bg-[url('/resources/hotel-bg.jpg')] bg-cover bg-center flex items-center justify-center"></header>
       <main className="px-4 container mx-auto flex flex-col justify-center items-center">
-        <div className="p-10 w-6/12 -mt-12 bg-white shadow-lg rounded-lg">filters</div>
+        <Filters rating={rating} setRating={setRating} />
         <section className="w-full mt-8 flex flex-col">
           <div className="border-2 border-blue-900 rounded-lg mb-4">
             <div className="p-4 border-blue-900 border-b-2 flex gap-8">
@@ -17,12 +80,8 @@ const App = () => {
                 <p>Address 1</p>
                 <p>Address 2</p>
               </div>
-              <div className="min-w-fit ml-auto flex">
-                <AiFillStar size="30px" color={colors.blue['900']} />
-                <AiFillStar size="30px" color={colors.blue['900']} />
-                <AiFillStar size="30px" color={colors.blue['900']} />
-                <AiFillStar size="30px" color={colors.blue['900']} />
-                <AiOutlineStar size="30px" color={colors.blue['900']} />
+              <div className="min-w-fit ml-auto flex flex-col">
+                <Stars rating={rating} />
               </div>
             </div>
             <div className="p-4 flex gap-8 border-blue-900 border-b-2 last:border-b-0">
