@@ -1,6 +1,6 @@
 import { Popover } from '@headlessui/react';
-import { FiChevronDown } from 'react-icons/fi';
 import React from 'react';
+import { FiChevronDown } from 'react-icons/fi';
 
 interface DropDownButtonProps {
   label: string;

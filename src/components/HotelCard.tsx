@@ -1,61 +1,99 @@
+import { Disclosure, Transition } from '@headlessui/react';
 import React from 'react';
+import {
+  AiOutlineClockCircle,
+  BsTelephone,
+  GoLocation,
+  MdAlternateEmail,
+} from 'react-icons/all';
 import Slider from 'react-slick';
 
+import useRoomData from '../hooks/useRoomData';
+import { Hotel } from '../types/hotels';
+import { transitionConfig } from '../utils/transition';
+import ErrorAlert from './ErrorAlert';
+import Loader from './Loader';
+import RoomDetails from './RoomDetails';
 import Stars from './Stars';
 
 interface HotelCardProps {
-  rating?: number;
+  hotel: Hotel;
 }
 
-const HotelCard = ({ rating }: HotelCardProps) => {
+const HotelCard = ({ hotel }: HotelCardProps) => {
+  const { loading, error, rooms, fetchRoomDetails } = useRoomData();
+
+  const handleSeeRooms = () => {
+    if (rooms.length === 0) {
+      fetchRoomDetails(hotel.id);
+    }
+  };
+
   return (
-    <div className="border-2 border-blue-900 rounded-lg mb-4">
-      <div className="p-4 border-blue-900 border-b-2 flex gap-8">
-        <div className="min-w-[13rem] w-52 h-52">
-          <Slider>
-            <img
-              src="https://via.placeholder.com/300x200.png/09f/fffC/O"
-              alt="asd"
-              className="w-52 h-52 object-cover"
-            />
-          </Slider>
+    <Disclosure>
+      {({ open }) => (
+        <div className="border-2 border-blue-900 rounded-lg mb-8 shadow-2xl">
+          <div className={`p-4 border-blue-900 flex gap-8 ${open ? 'border-b-2' : ''}`}>
+            <div className="min-w-[13rem] w-52 h-52">
+              <Slider>
+                {hotel.images.map((img) => (
+                  <img
+                    key={img.url}
+                    src={img.url}
+                    alt={img.alt}
+                    className="w-52 h-52 object-cover rounded-lg"
+                  />
+                ))}
+              </Slider>
+            </div>
+            <div className="basis-auto">
+              <h3 className="font-bold text-3xl mb-4">{hotel.name}</h3>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center">
+                  <GoLocation className="mr-2 min-w-fit" />
+                  <p>
+                    {hotel.address1}, {hotel.town}, {hotel.country}
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <BsTelephone className="mr-2 min-w-fit" />
+                  <p>{hotel.telephone}</p>
+                </div>
+                <div className="flex items-center">
+                  <MdAlternateEmail className="mr-2 min-w-fit" />
+                  <p>{hotel.email}</p>
+                </div>
+                <div className="flex items-center">
+                  <AiOutlineClockCircle className="mr-2 min-w-fit" />
+                  <p>
+                    Checkin: {hotel.checkInHours}:{hotel.checkInMinutes} / Checkout:{' '}
+                    {hotel.checkOutHours}:{hotel.checkOutMinutes}
+                  </p>
+                </div>
+                <Disclosure.Button
+                  className="bg-blue-900 text-white px-4 py-2 rounded self-start"
+                  onClick={handleSeeRooms}
+                >
+                  {open ? 'Hide' : 'Show'} available rooms
+                </Disclosure.Button>
+              </div>
+            </div>
+            <div className="min-w-fit ml-auto flex flex-col">
+              <Stars rating={Number(hotel.starRating)} />
+            </div>
+          </div>
+          <Transition {...transitionConfig}>
+            <Disclosure.Panel>
+              {loading && <Loader />}
+              {error && <ErrorAlert message={error} />}
+              {rooms.map((room) => (
+                <RoomDetails key={room.id} room={room} />
+              ))}
+            </Disclosure.Panel>
+          </Transition>
         </div>
-        <div className="basis-auto">
-          <h3 className="font-bold text-3xl mb-4">Hotel Name</h3>
-          <p>Address 1</p>
-          <p>Address 2</p>
-        </div>
-        <div className="min-w-fit ml-auto flex flex-col">
-          <Stars rating={rating} />
-        </div>
-      </div>
-      <div className="p-4 flex gap-8 border-blue-900 border-b-2 last:border-b-0">
-        <div className="flex flex-col min-w-[13rem]">
-          <h4 className="font-bold text-xl mb-2">Room 1 Name</h4>
-          <p className="">Adults: 2</p>
-          <p className="">Children: 0</p>
-        </div>
-        <div>
-          Description des Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-          Architecto maiores reprehenderit sunt! Ab accusamus asperiores assumenda,
-          blanditiis consectetur, consequatur deleniti esse facilis ipsam magnam nobis
-          placeat quas quia quis repudiandae.
-        </div>
-      </div>
-      <div className="p-4 flex gap-8 border-blue-900 border-b-2 last:border-b-0">
-        <div className="flex flex-col min-w-[13rem]">
-          <h4 className="font-bold text-xl mb-2">Room 2 Name</h4>
-          <p className="">Adults: 2</p>
-          <p className="">Children: 0</p>
-        </div>
-        <div>
-          Description des Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-          Architecto maiores reprehenderit sunt! Ab accusamus asperiores assumenda,
-          blanditiis consectetur, consequatur deleniti esse facilis ipsam magnam nobis
-          placeat quas quia quis repudiandae.
-        </div>
-      </div>
-    </div>
+      )}
+    </Disclosure>
   );
 };
 

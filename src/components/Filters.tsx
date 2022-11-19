@@ -15,7 +15,7 @@ const Filters = ({ rating, setRating }: FiltersProps) => {
   };
 
   return (
-    <div className="p-4 w-fit -mt-12 bg-white shadow-xl rounded-lg sticky top-0 flex items-center justify-between">
+    <div className="p-4 w-fit -mt-12 bg-white shadow-xl rounded-lg sticky top-0 flex items-center justify-between z-20 ">
       <Stars onClick={handleStartClick} rating={rating} />
       <AdultsDropdown />
       <ChildrenDropDown />
