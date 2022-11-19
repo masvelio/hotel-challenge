@@ -1,5 +1,5 @@
 import { Popover, Transition } from '@headlessui/react';
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { AiFillStar, AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 import { FiChevronDown } from 'react-icons/fi';
 import colors from 'tailwindcss/colors';
@@ -9,17 +9,39 @@ enum Operation {
   SUBTRACTION = 2,
 }
 
-const AdultsDropdown = () => {
-  const [numberOfAdults, setNumberOfAdults] = useState(0);
+interface DropDownButtonProps {
+  label: string;
+  number: number;
+  isOpen: boolean;
+}
 
+const DropDownButton = ({ label, number, isOpen }: DropDownButtonProps) => {
+  return (
+    <Popover.Button className="group inline-flex items-center rounded-md bg-blue-900 px-3 py-2 font-medium text-white ml-4">
+      <span>
+        {label}: {number}
+      </span>
+      <FiChevronDown
+        className={`${isOpen ? 'rotate-180' : 'rotate-0'} transition-all ml-1`}
+      />
+    </Popover.Button>
+  );
+};
+
+interface CounterProps {
+  onButtonClick: React.Dispatch<React.SetStateAction<number>>;
+  number: number;
+}
+
+const Counter = ({ onButtonClick, number }: CounterProps) => {
   const handleNumberChange = (type: Operation) => {
-    setNumberOfAdults((oldNumber) => {
+    onButtonClick((oldNumber) => {
       if (type === Operation.ADDITION) {
-        setNumberOfAdults(oldNumber + 1);
+        return oldNumber + 1;
       }
 
       if (type === Operation.SUBTRACTION && oldNumber > 0) {
-        setNumberOfAdults(oldNumber - 1);
+        return oldNumber - 1;
       }
 
       return oldNumber;
@@ -27,18 +49,60 @@ const AdultsDropdown = () => {
   };
 
   return (
+    <div className="flex">
+      <button
+        className="bg-blue-900 text-white py-2 px-4 rounded-full"
+        onClick={() => handleNumberChange(Operation.SUBTRACTION)}
+      >
+        <AiOutlineMinus />
+      </button>
+      <div className="font-medium flex items-center text-lg mx-4">{number}</div>
+      <button
+        className="bg-blue-900 text-white py-2 px-4 rounded-full"
+        onClick={() => handleNumberChange(Operation.ADDITION)}
+      >
+        <AiOutlinePlus />
+      </button>
+    </div>
+  );
+};
+
+interface DropDownPanelProps {
+  label: string;
+  description: string;
+  number: number;
+  onButtonClick: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const DropDownPanel = ({
+  label,
+  description,
+  number,
+  onButtonClick,
+}: DropDownPanelProps) => {
+  return (
+    <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-sm -translate-x-1/2 transform px-4">
+      <div className="mt-4 p-4 overflow-hidden rounded-lg shadow-2xl flex bg-white items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-900">{label}</p>
+          <p className="text-sm text-gray-500">{description}</p>
+        </div>
+        <Counter onButtonClick={onButtonClick} number={number} />
+      </div>
+    </Popover.Panel>
+  );
+};
+
+const ChildrenDropDown = () => {
+  const [numberOfChildren, setNumberOfChildren] = useState(0);
+
+  return (
     <div className="">
       <Popover className="relative">
         {({ open }) => (
           <>
-            <Popover.Button className="group inline-flex items-center rounded-md bg-blue-900 px-3 py-2 font-medium text-white ml-4">
-              <span>Adults: {numberOfAdults}</span>
-              <FiChevronDown
-                className={`${open ? 'rotate-180' : 'rotate-0'} transition-all ml-1`}
-              />
-            </Popover.Button>
+            <DropDownButton label="Children" number={numberOfChildren} isOpen={open} />
             <Transition
-              as={Fragment}
               enter="transition ease-out duration-200"
               enterFrom="opacity-0 translate-y-1"
               enterTo="opacity-100 translate-y-0"
@@ -46,31 +110,43 @@ const AdultsDropdown = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-sm -translate-x-1/2 transform px-4">
-                <div className="mt-4 p-4 overflow-hidden rounded-lg shadow-2xl flex bg-white items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Number of Adults</p>
-                    <p className="text-sm text-gray-500">over 18 years old</p>
-                  </div>
-                  <div className="flex">
-                    <button
-                      className="bg-blue-900 text-white py-2 px-4 rounded-full"
-                      onClick={() => handleNumberChange(Operation.SUBTRACTION)}
-                    >
-                      <AiOutlineMinus />
-                    </button>
-                    <div className="font-medium flex items-center text-lg mx-4">
-                      {numberOfAdults}
-                    </div>
-                    <button
-                      className="bg-blue-900 text-white py-2 px-4 rounded-full"
-                      onClick={() => handleNumberChange(Operation.ADDITION)}
-                    >
-                      <AiOutlinePlus />
-                    </button>
-                  </div>
-                </div>
-              </Popover.Panel>
+              <DropDownPanel
+                label="Number of Children"
+                description="under 18 years old"
+                number={numberOfChildren}
+                onButtonClick={setNumberOfChildren}
+              />
+            </Transition>
+          </>
+        )}
+      </Popover>
+    </div>
+  );
+};
+
+const AdultsDropdown = () => {
+  const [numberOfAdults, setNumberOfAdults] = useState(0);
+
+  return (
+    <div className="">
+      <Popover className="relative">
+        {({ open }) => (
+          <>
+            <DropDownButton label="Adults" number={numberOfAdults} isOpen={open} />
+            <Transition
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0 translate-y-1"
+              enterTo="opacity-100 translate-y-0"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-1"
+            >
+              <DropDownPanel
+                label="Number of Adults"
+                description="over 18 years old"
+                number={numberOfAdults}
+                onButtonClick={setNumberOfAdults}
+              />
             </Transition>
           </>
         )}
@@ -134,9 +210,10 @@ const Filters = ({ rating, setRating }: FiltersProps) => {
   };
 
   return (
-    <div className="p-4 w-6/12 -mt-12 bg-white shadow-xl rounded-lg sticky top-0 flex items-center">
+    <div className="p-4 w-6/12 -mt-12 bg-white shadow-xl rounded-lg sticky top-0 flex items-center justify-between">
       <Stars onClick={handleStartClick} rating={rating} />
       <AdultsDropdown />
+      <ChildrenDropDown />
     </div>
   );
 };
