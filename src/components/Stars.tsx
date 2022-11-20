@@ -3,7 +3,7 @@ import { AiFillStar } from 'react-icons/ai';
 import colors from 'tailwindcss/colors';
 
 interface StarsProps {
-  rating?: number;
+  rating: number;
   maxRating?: number;
   onClick?: (newRating: number) => void;
 }
@@ -17,7 +17,7 @@ const Stars = ({ rating, maxRating = 5, onClick }: StarsProps) => {
         .fill(null)
         .map((el, i) => {
           const areStarsHoverable = !!onClick;
-          const isStarIndexLowerThanRating = i < Number(rating);
+          const isStarIndexLowerThanRating = i < rating;
           const isCurrentlyHovering = hoveredIndex !== null;
 
           const isStarHovered = isCurrentlyHovering

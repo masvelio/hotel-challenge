@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
+import { useFilter } from '../context/filterContext';
 import { HotelDetails, Room } from '../types/hotels';
 import { API_URL_PATH_ROOM_RATES, BASE_API_URL } from '../utils/config';
 
@@ -7,6 +8,8 @@ const useRoomData = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [rooms, setRooms] = useState<Room[]>([]);
+
+  const { adultsInRoom, childrenInRoom } = useFilter();
 
   const fetchRoomDetails = async (roomId: string) => {
     try {
@@ -22,11 +25,22 @@ const useRoomData = () => {
     }
   };
 
+  const filteredRooms = useMemo(
+    () =>
+      rooms.filter(
+        (room) =>
+          room.occupancy.maxChildren >= childrenInRoom &&
+          room.occupancy.maxAdults >= adultsInRoom,
+      ),
+    [rooms, childrenInRoom, adultsInRoom],
+  );
+
   return {
     loading,
     error,
-    rooms,
+    rooms: filteredRooms,
     fetchRoomDetails,
+    fetched: rooms.length > 0,
   };
 };
 

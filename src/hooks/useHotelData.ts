@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { useFilter } from '../context/filterContext';
 import { Hotel } from '../types/hotels';
 import { API_URL_PATH_HOTEL, BASE_API_URL } from '../utils/config';
 
@@ -7,6 +8,8 @@ const useHotelData = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [hotels, setHotels] = useState<Hotel[]>([]);
+
+  const { rating } = useFilter();
 
   useEffect(() => {
     const fetchHotelData = async () => {
@@ -26,10 +29,15 @@ const useHotelData = () => {
     fetchHotelData();
   }, []);
 
+  const filteredHotels = useMemo(
+    () => hotels.filter((hotel) => Number(hotel.starRating) >= rating),
+    [hotels, rating],
+  );
+
   return {
     loading,
     error,
-    hotels,
+    hotels: filteredHotels,
   };
 };
 

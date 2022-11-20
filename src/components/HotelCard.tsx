@@ -11,7 +11,7 @@ import Slider from 'react-slick';
 import useRoomData from '../hooks/useRoomData';
 import { Hotel } from '../types/hotels';
 import { transitionConfig } from '../utils/transition';
-import ErrorAlert from './ErrorAlert';
+import Alert from './Alert';
 import Loader from './Loader';
 import RoomDetails from './RoomDetails';
 import Stars from './Stars';
@@ -21,10 +21,10 @@ interface HotelCardProps {
 }
 
 const HotelCard = ({ hotel }: HotelCardProps) => {
-  const { loading, error, rooms, fetchRoomDetails } = useRoomData();
+  const { loading, error, rooms, fetchRoomDetails, fetched } = useRoomData();
 
   const handleSeeRooms = () => {
-    if (rooms.length === 0) {
+    if (!fetched) {
       fetchRoomDetails(hotel.id);
     }
   };
@@ -85,7 +85,10 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
           <Transition {...transitionConfig}>
             <Disclosure.Panel>
               {loading && <Loader />}
-              {error && <ErrorAlert message={error} />}
+              {error && <Alert message={error} type="danger" />}
+              {rooms.length === 0 ? (
+                <Alert message="Noo rooms available" type="info" />
+              ) : null}
               {rooms.map((room) => (
                 <RoomDetails key={room.id} room={room} />
               ))}

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import useHotelData from '../hooks/useHotelData';
-import ErrorAlert from './ErrorAlert';
+import Alert from './Alert';
 import HotelCard from './HotelCard';
 import Loader from './Loader';
 
@@ -13,7 +13,7 @@ const HotelsList = () => {
   }
 
   if (error) {
-    return <ErrorAlert message={error} />;
+    return <Alert message={error} type="danger" />;
   }
 
   return (
