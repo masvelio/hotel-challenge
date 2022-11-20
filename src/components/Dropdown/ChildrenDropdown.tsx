@@ -16,23 +16,21 @@ const ChildrenDropDown = ({
   setChildrenInRoom,
 }: ChildrenDropDownPros) => {
   return (
-    <div className="">
-      <Popover className="relative">
-        {({ open }) => (
-          <>
-            <DropDownButton label="Children" number={childrenInRoom} isOpen={open} />
-            <Transition {...transitionConfig}>
-              <DropDownPanel
-                label="Number of Children"
-                description="under 18 years old"
-                number={childrenInRoom}
-                onButtonClick={setChildrenInRoom}
-              />
-            </Transition>
-          </>
-        )}
-      </Popover>
-    </div>
+    <Popover className="relative">
+      {({ open }) => (
+        <>
+          <DropDownButton label="Children" number={childrenInRoom} isOpen={open} />
+          <Transition {...transitionConfig}>
+            <DropDownPanel
+              label="Number of Children"
+              description="under 18 years old"
+              number={childrenInRoom}
+              onButtonClick={setChildrenInRoom}
+            />
+          </Transition>
+        </>
+      )}
+    </Popover>
   );
 };
 

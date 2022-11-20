@@ -33,7 +33,11 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
     <Disclosure>
       {({ open }) => (
         <div className="border-2 border-blue-900 rounded-lg mb-8 shadow-2xl">
-          <div className={`p-4 border-blue-900 flex gap-8 ${open ? 'border-b-2' : ''}`}>
+          <div
+            className={`p-4 border-blue-900 flex flex-col md:flex-row gap-8 ${
+              open ? 'border-b-2' : ''
+            }`}
+          >
             <div className="min-w-[13rem] w-52 h-52">
               <Slider>
                 {hotel.images.map((img) => (
@@ -78,7 +82,7 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
                 </Disclosure.Button>
               </div>
             </div>
-            <div className="min-w-fit ml-auto flex flex-col">
+            <div className="min-w-fit md:ml-auto flex flex-col">
               <Stars rating={Number(hotel.starRating)} />
             </div>
           </div>
@@ -86,7 +90,7 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
             <Disclosure.Panel>
               {loading && <Loader />}
               {error && <Alert message={error} type="danger" />}
-              {rooms.length === 0 ? (
+              {!loading && rooms.length === 0 ? (
                 <Alert message="Noo rooms available" type="info" />
               ) : null}
               {rooms.map((room) => (
