@@ -11,10 +11,10 @@ import Slider from 'react-slick';
 import useRoomData from '../hooks/useRoomData';
 import { Hotel } from '../types/hotels';
 import { transitionConfig } from '../utils/transition';
-import Alert from './Alert';
-import Loader from './Loader';
 import RoomDetails from './RoomDetails';
-import Stars from './Stars';
+import Alert from './shared/Alert';
+import Loader from './shared/Loader';
+import Stars from './shared/Stars';
 
 interface HotelCardProps {
   hotel: Hotel;

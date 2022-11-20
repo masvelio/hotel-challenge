@@ -3,7 +3,7 @@ import React from 'react';
 import { useFilter } from '../context/filterContext';
 import AdultsDropdown from './Dropdown/AdultsDropdown';
 import ChildrenDropDown from './Dropdown/ChildrenDropdown';
-import Stars from './Stars';
+import Stars from './shared/Stars';
 
 const Filters = () => {
   const {

@@ -33,6 +33,8 @@ In couple hours I have created small app that allows fetch data about hotels and
 
 ## How to develop
 
+Before you run the app, make sure that you have created `.env` file in root directory with proper content. Check `.env.example` for more info.
+
 ```bash
 # clone repository
 $ git clone https://github.com/masvelio/hotel-challenge.git

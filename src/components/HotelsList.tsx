@@ -1,9 +1,9 @@
 import React from 'react';
 
 import useHotelData from '../hooks/useHotelData';
-import Alert from './Alert';
 import HotelCard from './HotelCard';
-import Loader from './Loader';
+import Alert from './shared/Alert';
+import Loader from './shared/Loader';
 
 const HotelsList = () => {
   const { loading, error, hotels } = useHotelData();
